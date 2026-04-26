@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volatile — AI Market Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080B0F;
+    --surface: #0D1117;
+    --card: #111820;
+    --border: #1C2A3A;
+    --border-bright: #2A3F56;
+    --accent: #00E5A0;
+    --accent2: #00B87A;
+    --accent-dim: rgba(0,229,160,0.12);
+    --accent-glow: rgba(0,229,160,0.06);
+    --white: #F0F4F8;
+    --muted: #6B8099;
+    --muted2: #8FA3B8;
+    --danger: #FF4D4D;
+    --pvs: #7B61FF;
+    --pvs-dim: rgba(123,97,255,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ── GRID OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,160,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,160,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(8,11,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.12em;
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--accent); }
+
+  .nav-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .nav-pvs {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--pvs);
+    letter-spacing: 0.08em;
+    background: var(--pvs-dim);
+    border: 0.5px solid rgba(123,97,255,0.3);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  /* ── SECTIONS ── */
+  section { position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 48px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .hero-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-kicker::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-headline {
+    font-size: clamp(52px, 7vw, 92px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+  }
+
+  .hero-headline em {
+    font-style: normal;
+    color: var(--accent);
+    position: relative;
+  }
+
+  .hero-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    color: var(--muted2);
+    line-height: 1.7;
+    max-width: 560px;
+    margin-bottom: 52px;
+    font-weight: 300;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--black);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+
+  .btn-primary:hover {
+    background: #00FFB2;
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted2);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+
+  .btn-ghost:hover { color: var(--white); }
+
+  .hero-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 20px;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    overflow: hidden;
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    background: var(--surface);
+    padding: 12px 0;
+  }
+
+  .ticker-track {
+    display: flex;
+    gap: 0;
+    animation: ticker 28s linear infinite;
+    width: max-content;
+  }
+
+  .ticker-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    border-right: 0.5px solid var(--border);
+  }
+
+  .ticker-item .val { color: var(--accent); font-weight: 500; }
+  .ticker-item .neg { color: var(--danger); }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── INSIGHT SECTION ── */
+  .insight {
+    padding: 120px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+    max-width: 200px;
+  }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 48px;
+  }
+
+  .insight-card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    padding: 40px;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .insight-card:hover { border-color: var(--border-bright); }
+
+  .insight-card.accent-card {
+    border-color: rgba(0,229,160,0.3);
+    background: linear-gradient(135deg, #0D1F17 0%, var(--card) 60%);
+  }
+
+  .insight-card .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+
+  .insight-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .insight-card.accent-card h3 { color: var(--accent); }
+
+  .insight-card p {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted2);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .insight-card .corner-mark {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 6px;
+    height: 6px;
+    border-top: 1.5px solid var(--accent);
+    border-right: 1.5px solid var(--accent);
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how {
+    padding: 120px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .steps {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr;
+    border: 0.5px solid var(--border);
+    background: var(--card);
+    transition: border-color 0.3s, background 0.3s;
+    cursor: default;
+  }
+
+  .step:hover {
+    border-color: var(--accent);
+    background: linear-gradient(90deg, #0D1F17 0%, var(--card) 40%);
+  }
+
+  .step-num-col {
+    padding: 32px 24px;
+    border-right: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .step-num-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .step-content {
+    padding: 32px;
+    border-right: 0.5px solid var(--border);
+  }
+
+  .step-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .step-body {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted2);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .step-signal {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .step-signal-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .step-signal-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted2);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .step.highlight .step-signal-val { color: var(--accent); }
+
+  /* ── VS SECTION ── */
+  .vs {
+    padding: 120px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .vs-grid {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    margin-top: 48px;
+    border: 0.5px solid var(--border);
+  }
+
+  .vs-col {
+    padding: 40px;
+  }
+
+  .vs-col.bad { background: var(--surface); }
+  .vs-col.good { background: linear-gradient(135deg, #0D1F17 0%, var(--card) 80%); }
+
+  .vs-col-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .vs-col.bad .vs-col-label { color: var(--muted); }
+  .vs-col.good .vs-col-label { color: var(--accent); }
+
+  .vs-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 12px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .vs-col.bad .vs-item { color: var(--muted2); }
+  .vs-col.good .vs-item { color: var(--white); font-weight: 500; }
+
+  .vs-verdict {
+    margin-top: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .vs-col.bad .vs-verdict { color: var(--muted); }
+  .vs-col.good .vs-verdict { color: var(--accent); }
+
+  .vs-divider {
+    background: var(--surface);
+    border-left: 0.5px solid var(--border);
+    border-right: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .vs-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    writing-mode: vertical-rl;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── SIGNALS ── */
+  .signals {
+    padding: 120px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .signals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 48px;
+  }
+
+  .signal-card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    padding: 36px;
+    display: flex;
+    gap: 24px;
+    transition: border-color 0.3s;
+  }
+
+  .signal-card:hover { border-color: var(--border-bright); }
+
+  .signal-icon {
+    width: 40px;
+    height: 40px;
+    border: 0.5px solid var(--accent);
+    background: var(--accent-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .signal-content h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .signal-content p {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted2);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  /* ── PVS SECTION ── */
+  .pvs-section {
+    padding: 120px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .pvs-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+    margin-top: 48px;
+  }
+
+  .pvs-headline {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  .pvs-headline span { color: var(--pvs); }
+
+  .pvs-body {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted2);
+    line-height: 1.9;
+    font-weight: 300;
+  }
+
+  .pvs-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .pvs-layer {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.3s;
+  }
+
+  .pvs-layer:first-child {
+    border-color: rgba(0,229,160,0.4);
+    background: linear-gradient(90deg, #0D1F17, var(--card));
+  }
+
+  .pvs-layer:hover { border-color: var(--border-bright); }
+
+  .pvs-layer-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .pvs-layer:nth-child(1) .pvs-layer-dot { background: var(--accent); }
+  .pvs-layer:nth-child(2) .pvs-layer-dot { background: var(--pvs); }
+  .pvs-layer:nth-child(3) .pvs-layer-dot { background: #FF8C42; }
+  .pvs-layer:nth-child(4) .pvs-layer-dot { background: #4DC4FF; }
+
+  .pvs-layer-name {
+    font-size: 14px;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .pvs-layer:nth-child(1) .pvs-layer-name { color: var(--accent); }
+
+  .pvs-layer-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .pvs-footnote {
+    margin-top: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.8;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    padding: 80px 48px 140px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .cta-box {
+    border: 0.5px solid rgba(0,229,160,0.4);
+    background: linear-gradient(135deg, #0A1A10 0%, var(--surface) 60%);
+    padding: 72px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .cta-box::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 200px;
+    height: 200px;
+    border: 0.5px solid rgba(0,229,160,0.1);
+    border-radius: 50%;
+  }
+
+  .cta-inner {
+    max-width: 640px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .cta-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  .cta-title em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .cta-body {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted2);
+    line-height: 1.9;
+    font-weight: 300;
+    margin-bottom: 40px;
+    max-width: 480px;
+  }
+
+  .cta-form {
+    display: flex;
+    gap: 0;
+    max-width: 480px;
+  }
+
+  .cta-input {
+    flex: 1;
+    background: rgba(8,11,15,0.8);
+    border: 0.5px solid var(--border-bright);
+    border-right: none;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 16px 20px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-weight: 300;
+  }
+
+  .cta-input::placeholder { color: var(--muted); }
+  .cta-input:focus { border-color: var(--accent); }
+
+  .cta-submit {
+    background: var(--accent);
+    color: var(--black);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px 28px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+
+  .cta-submit:hover { background: #00FFB2; }
+
+  .cta-spots {
+    margin-top: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .spot-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .cta-disclaimer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 0.5px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  .footer-logo span { color: var(--accent); }
+
+  .footer-pvs {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-pvs span { color: var(--pvs); }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .hero { padding: 120px 24px 60px; }
+    .hero-headline { font-size: 42px; }
+    .insight, .how, .vs, .signals, .pvs-section, .cta-section { padding: 80px 24px; }
+    .insight-grid, .signals-grid { grid-template-columns: 1fr; }
+    .step { grid-template-columns: 60px 1fr; }
+    .step-signal { display: none; }
+    .vs-grid { grid-template-columns: 1fr; }
+    .vs-divider { display: none; }
+    .pvs-intro { grid-template-columns: 1fr; gap: 40px; }
+    .cta-box { padding: 48px 32px; }
+    .cta-form { flex-direction: column; }
+    .cta-input { border-right: 0.5px solid var(--border-bright); border-bottom: none; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">VOLA<span>TILE</span></a>
+  <span class="nav-tag">AI MARKET INTELLIGENCE</span>
+  <span class="nav-pvs">PVS ECOSYSTEM</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-kicker">Volatile by VaultSure</div>
+  <h1 class="hero-headline fade-up">
+    Volatility<br/>isn't noise.<br/>It's <em>the signal.</em>
+  </h1>
+  <p class="hero-sub fade-up">
+    Before every major market move, there's a window.<br/>
+    Most traders miss it. Volatile is built to find it.
+  </p>
+  <div class="hero-actions fade-up">
+    <a href="#cta" class="btn-primary">Get Early Access</a>
+    <a href="#how" class="btn-ghost">See how it works →</a>
+  </div>
+  <p class="hero-note fade-up">Founding member pricing · First 25 spots · Not financial advice</p>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="ticker-item">BTC/USD <span class="val">+4.2%</span> PRESSURE DETECTED</div>
+    <div class="ticker-item">SPY VOLATILITY <span class="val">VIX 22.4</span> ELEVATED</div>
+    <div class="ticker-item">ETH/USD <span class="neg">-2.1%</span> SENTIMENT SHIFT</div>
+    <div class="ticker-item">VOLUME ANOMALY <span class="val">AAPL +340%</span> FLAGGED</div>
+    <div class="ticker-item">REAL ESTATE <span class="val">SENTIMENT ↑</span> CROSS-SIGNAL</div>
+    <div class="ticker-item">NVDA <span class="val">PRESSURE BUILDING</span> WATCH</div>
+    <div class="ticker-item">CRYPTO SENTIMENT <span class="neg">DIVERGING</span> ALERT</div>
+    <div class="ticker-item">BTC/USD <span class="val">+4.2%</span> PRESSURE DETECTED</div>
+    <div class="ticker-item">SPY VOLATILITY <span class="val">VIX 22.4</span> ELEVATED</div>
+    <div class="ticker-item">ETH/USD <span class="neg">-2.1%</span> SENTIMENT SHIFT</div>
+    <div class="ticker-item">VOLUME ANOMALY <span class="val">AAPL +340%</span> FLAGGED</div>
+    <div class="ticker-item">REAL ESTATE <span class="val">SENTIMENT ↑</span> CROSS-SIGNAL</div>
+    <div class="ticker-item">NVDA <span class="val">PRESSURE BUILDING</span> WATCH</div>
+    <div class="ticker-item">CRYPTO SENTIMENT <span class="neg">DIVERGING</span> ALERT</div>
+  </div>
+</div>
+
+<!-- INSIGHT -->
+<section class="insight">
+  <div class="section-label">The Core Insight</div>
+  <div class="insight-grid">
+    <div class="insight-card fade-up">
+      <div class="card-num">01 / PROBLEM</div>
+      <h3>Everyone is reacting to the same move.</h3>
+      <p>By the time a trend is visible, it's already priced in. Most traders are entering at step 3 of a 3-step sequence — after the opportunity has closed.</p>
+    </div>
+    <div class="insight-card accent-card fade-up">
+      <div class="corner-mark"></div>
+      <div class="card-num">02 / EDGE</div>
+      <h3>The signal lives in steps 1 and 2.</h3>
+      <p>Before every big move, pressure builds. Volume behaves abnormally. Sentiment diverges from price. Volatile is built to detect this window — not report on what already happened.</p>
+    </div>
+    <div class="insight-card fade-up">
+      <div class="card-num">03 / INSIGHT</div>
+      <h3>Volatility is where information asymmetry exists.</h3>
+      <p>Institutions reposition during volatile periods. Liquidity shifts happen before the crowd sees them. The chaos isn't the problem — it's the opportunity, if you can read it.</p>
+    </div>
+    <div class="insight-card fade-up">
+      <div class="card-num">04 / APPROACH</div>
+      <h3>"Where is pressure building before the move?"</h3>
+      <p>That's the question Volatile asks. Not "where is the market going?" — but where is instability accumulating right now, across stocks, crypto, and real estate simultaneously.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-label">How Markets Move</div>
+  <h2 style="font-size:32px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;">The 3-step sequence<br/>most traders only see at step 3.</h2>
+  <div class="steps">
+    <div class="step fade-up">
+      <div class="step-num-col"><div class="step-num-val">01</div></div>
+      <div class="step-content">
+        <div class="step-title">Tension builds</div>
+        <div class="step-body">Uncertainty, conflicting news, or shifting institutional positioning creates instability. Price ranges tighten or widen abnormally. Volume starts behaving differently.</div>
+      </div>
+      <div class="step-signal">
+        <div class="step-signal-label">Volatile detects</div>
+        <div class="step-signal-val">Volume anomalies · Sentiment divergence · Cross-market correlation shifts</div>
+      </div>
+    </div>
+    <div class="step highlight fade-up">
+      <div class="step-num-col"><div class="step-num-val">02</div></div>
+      <div class="step-content">
+        <div class="step-title">Volatility increases</div>
+        <div class="step-body">Sentiment shifts. Volume spikes. Price swings become erratic. Cross-market signals emerge. This is the window — the moment most traders ignore because it feels like noise.</div>
+      </div>
+      <div class="step-signal">
+        <div class="step-signal-label">This is where you act</div>
+        <div class="step-signal-val">Pressure detected · Intelligence surfaced · Window open</div>
+      </div>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num-col"><div class="step-num-val">03</div></div>
+      <div class="step-content">
+        <div class="step-title">Direction reveals itself</div>
+        <div class="step-body">The breakout, crash, or trend that everyone can see. By this point, the move is largely priced in. Most traders are entering here. The opportunity was in steps 1 and 2.</div>
+      </div>
+      <div class="step-signal">
+        <div class="step-signal-label">Most traders enter here</div>
+        <div class="step-signal-val">Too late. Already priced in.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VS -->
+<section class="vs">
+  <div class="section-label">The Difference</div>
+  <div class="vs-grid">
+    <div class="vs-col bad">
+      <div class="vs-col-label">Conventional thinking</div>
+      <div class="vs-item">"Find the trend"</div>
+      <div class="vs-item">"Wait for confirmation"</div>
+      <div class="vs-item">"Follow the indicators"</div>
+      <div class="vs-item">"Avoid volatility"</div>
+      <div class="vs-verdict">→ You're late.</div>
+    </div>
+    <div class="vs-divider"><span class="vs-badge">VS</span></div>
+    <div class="vs-col good">
+      <div class="vs-col-label">Volatile thinking</div>
+      <div class="vs-item">Track instability before the trend</div>
+      <div class="vs-item">Detect abnormal behavior early</div>
+      <div class="vs-item">Measure sentiment shifts in real time</div>
+      <div class="vs-item">Read volatility as information</div>
+      <div class="vs-verdict">→ You're early.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNALS -->
+<section class="signals">
+  <div class="section-label">What Volatile Tracks</div>
+  <h2 style="font-size:32px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;">The four signals that<br/>precede meaningful moves.</h2>
+  <div class="signals-grid">
+    <div class="signal-card fade-up">
+      <div class="signal-icon">V</div>
+      <div class="signal-content">
+        <h4>Volume anomalies</h4>
+        <p>Sudden spikes in trading volume — especially on assets that have been quiet — indicate repositioning. Institutions don't announce their moves. Volume does.</p>
+      </div>
+    </div>
+    <div class="signal-card fade-up">
+      <div class="signal-icon">S</div>
+      <div class="signal-content">
+        <h4>Sentiment divergence</h4>
+        <p>When social sentiment, news tone, and price start moving in different directions, something is about to give. The gap between narrative and price is where opportunity hides.</p>
+      </div>
+    </div>
+    <div class="signal-card fade-up">
+      <div class="signal-icon">P</div>
+      <div class="signal-content">
+        <h4>Price instability</h4>
+        <p>Tightening ranges followed by expansion, failed breakouts, or whipsaw action are signs the market is coiling. Energy is building before it releases.</p>
+      </div>
+    </div>
+    <div class="signal-card fade-up">
+      <div class="signal-icon">X</div>
+      <div class="signal-content">
+        <h4>Cross-market signals</h4>
+        <p>Markets don't move in isolation. Crypto volatility often precedes equity moves. Real estate sentiment shifts before corrections. The signal sometimes lives in a different asset class.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PVS SECTION -->
+<section class="pvs-section">
+  <div class="section-label" style="--accent: var(--pvs); color: var(--pvs);">The Bigger Picture</div>
+  <div class="pvs-intro">
+    <div>
+      <h2 class="pvs-headline">Volatile is the first layer of <span>something larger.</span></h2>
+      <p class="pvs-body">
+        Volatile is built on VaultSure's PVS (Prime · Volatile · SWISH) intelligence architecture — a unified system that connects market intelligence, risk scoring, and business operations into a single decision layer.<br/><br/>
+        Founding members of Volatile aren't just getting early access to a product. They're joining the ground floor of an AI financial intelligence ecosystem built to survive any market cycle.<br/><br/>
+        As PVS evolves, Volatile users will have first access to cross-system intelligence — signals that combine market pressure detection with cybersecurity risk scoring and real-world asset data.
+      </p>
+      <p class="pvs-footnote">Early members help shape what gets built next.</p>
+    </div>
+    <div class="pvs-stack">
+      <div class="pvs-layer">
+        <div class="pvs-layer-dot"></div>
+        <div class="pvs-layer-name">Volatile</div>
+        <div class="pvs-layer-tag">MARKET INTELLIGENCE · ACTIVE</div>
+      </div>
+      <div class="pvs-layer">
+        <div class="pvs-layer-dot"></div>
+        <div class="pvs-layer-name" style="color:var(--pvs)">Prime</div>
+        <div class="pvs-layer-tag">CYBERSECURITY + RISK · COMING</div>
+      </div>
+      <div class="pvs-layer">
+        <div class="pvs-layer-dot"></div>
+        <div class="pvs-layer-name" style="color:#FF8C42">SWISH</div>
+        <div class="pvs-layer-tag">SPORTS + BUSINESS OPS · COMING</div>
+      </div>
+      <div class="pvs-layer">
+        <div class="pvs-layer-dot"></div>
+        <div class="pvs-layer-name" style="color:#4DC4FF">VaultScore™</div>
+        <div class="pvs-layer-tag">UNIFIED DECISION ENGINE · ROADMAP</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="cta-box">
+    <div class="cta-inner">
+      <div class="cta-kicker">Founding Member Access</div>
+      <h2 class="cta-title">Get early access<br/>to <em>Volatile.</em></h2>
+      <p class="cta-body">
+        Join the founding member list. Early access pricing, direct input on what gets built, and first access to PVS cross-system intelligence as the ecosystem expands.
+      </p>
+      <div class="cta-form">
+        <input type="email" class="cta-input" placeholder="your@email.com" />
+        <button class="cta-submit">Get Access</button>
+      </div>
+      <div class="cta-spots">
+        <div class="spot-dot"></div>
+        Founding member pricing · First 25 spots only
+      </div>
+      <p class="cta-disclaimer">
+        Not financial advice. Volatile is a market intelligence tool for educational and informational purposes only.
+        It does not provide investment recommendations or guaranteed outcomes. All market activity involves risk.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">VOLA<span>TILE</span></div>
+  <div class="footer-pvs">Part of the <span>VaultSure PVS</span> ecosystem</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+  document.querySelector('.cta-submit').addEventListener('click', () => {
+    const input = document.querySelector('.cta-input');
+    if (input.value && input.value.includes('@')) {
+      input.value = '';
+      input.placeholder = 'You\'re on the list. We\'ll be in touch.';
+      document.querySelector('.cta-submit').textContent = 'Done ✓';
+      document.querySelector('.cta-submit').style.background = '#00B87A';
+    } else {
+      input.style.borderColor = '#FF4D4D';
+      setTimeout(() => input.style.borderColor = '', 1000);
+    }
+  });
+</script>
+</body>
+</html>
